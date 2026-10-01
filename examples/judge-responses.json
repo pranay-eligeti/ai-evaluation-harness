@@ -1,0 +1,41 @@
+{
+  "model": "offline-semantic-fixture-v2",
+  "responses": {
+    "answer_relevance": {
+      "correct": {
+        "score": 1,
+        "reasoning": "Synthetic recorded relevance verdict; not a live model assessment."
+      },
+      "wrong": {
+        "score": 1,
+        "reasoning": "Synthetic recorded relevance verdict; not a live model assessment."
+      },
+      "missing": {
+        "score": 0.5,
+        "reasoning": "Synthetic recorded relevance verdict; not a live model assessment."
+      },
+      "duplicate": {
+        "score": 1,
+        "reasoning": "Synthetic recorded relevance verdict; not a live model assessment."
+      },
+      "no-relevant": {
+        "score": 0.5,
+        "reasoning": "Synthetic recorded relevance verdict; not a live model assessment."
+      }
+    },
+    "groundedness": {
+      "correct": {
+        "score": 1,
+        "reasoning": "Synthetic recorded faithfulness verdict; not a live model assessment."
+      },
+      "wrong": {
+        "score": 0,
+        "reasoning": "Synthetic recorded faithfulness verdict; not a live model assessment."
+      },
+      "duplicate": {
+        "score": 1,
+        "reasoning": "Synthetic recorded faithfulness verdict; not a live model assessment."
+      }
+    }
+  }
+}

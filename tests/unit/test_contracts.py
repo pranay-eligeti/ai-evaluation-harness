@@ -145,7 +145,7 @@ def test_offline_judge_pipeline() -> None:
     assert result.status == EvaluationStatus.FAILED
     assert result.score == 0.75
     assert result.metadata["judge_model"].startswith("scripted:")
-    assert result.metadata["prompt_version"] == "1"
+    assert result.metadata["prompt_version"] == "2"
     missing = case.model_copy(update={"case_id": "unrecorded"})
     assert evaluator.evaluate(missing).status == EvaluationStatus.ERROR
     assert (
@@ -181,3 +181,8 @@ def test_inconsistent_results(status: str, score: float | None, threshold: float
                 "explanation": "reason",
             }
         )
+
+
+def test_strict_verdict_rejects_duplicate_fields() -> None:
+    with pytest.raises(JudgeResponseError):
+        parse_verdict('{"score":0,"score":1,"reasoning":"ambiguous"}', strict=True)

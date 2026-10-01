@@ -62,7 +62,16 @@ def _coerce_score(value: Any) -> float:
     )
 
 
-def parse_verdict(response_text: str) -> JudgeVerdict:
+def _strict_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate JSON fields")
+        result[key] = value
+    return result
+
+
+def parse_verdict(response_text: str, *, strict: bool = False) -> JudgeVerdict:
     """Parse a judge's raw completion into a verdict.
 
     Args:
@@ -76,14 +85,14 @@ def parse_verdict(response_text: str) -> JudgeVerdict:
             object, is missing ``score`` or ``reasoning``, has a ``score`` of the
             wrong type or outside ``[0.0, 1.0]``, or has empty ``reasoning``.
     """
-    candidate = _strip_code_fence(response_text)
+    candidate = response_text.strip() if strict else _strip_code_fence(response_text)
     if not candidate:
         raise JudgeResponseError("response was empty", response_text)
 
     try:
-        payload = json.loads(candidate)
-    except json.JSONDecodeError as exc:
-        raise JudgeResponseError(f"response is not valid JSON: {exc.msg}", response_text) from exc
+        payload = json.loads(candidate, object_pairs_hook=_strict_object if strict else dict)
+    except ValueError:
+        raise JudgeResponseError("response is not unambiguous valid JSON", response_text) from None
 
     if not isinstance(payload, dict):
         raise JudgeResponseError(
@@ -94,7 +103,12 @@ def parse_verdict(response_text: str) -> JudgeVerdict:
     if missing:
         raise JudgeResponseError(f"missing required key(s): {', '.join(missing)}", response_text)
 
-    score = _coerce_score(payload["score"])
+    if strict and (set(payload) != {"score", "reasoning"} or isinstance(payload["score"], bool)):
+        raise JudgeResponseError("strict verdict requires only numeric score and reasoning", "")
+    try:
+        score = _coerce_score(payload["score"])
+    except OverflowError:
+        raise JudgeResponseError("score is outside numeric range", "") from None
     reasoning = payload["reasoning"]
     if not isinstance(reasoning, str):
         raise JudgeResponseError(

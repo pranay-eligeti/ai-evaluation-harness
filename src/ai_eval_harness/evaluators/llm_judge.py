@@ -23,12 +23,13 @@ from __future__ import annotations
 
 from typing import ClassVar
 
+from ai_eval_harness.errors import JudgeError, ProviderRequestError
 from ai_eval_harness.evaluators.base import BaseEvaluator
 from ai_eval_harness.judges.base import JudgeProvider
 from ai_eval_harness.judges.parsing import parse_verdict
-from ai_eval_harness.judges.prompts import JudgePromptBuilder
+from ai_eval_harness.judges.prompts import PROMPT_VERSION, JudgePromptBuilder
 from ai_eval_harness.models import EvaluationCase
-from ai_eval_harness.results import EvaluatorKind, Measurement
+from ai_eval_harness.results import EvaluationResult, EvaluatorKind, Measurement
 
 __all__ = ["LlmJudgeEvaluator"]
 
@@ -95,6 +96,17 @@ class LlmJudgeEvaluator(BaseEvaluator):
         """The provider this instance calls."""
         return self._provider
 
+    def evaluate(self, case: EvaluationCase) -> EvaluationResult:
+        result = super().evaluate(case)
+        provenance = {
+            "criterion": self._criterion,
+            "judge_provider": self._provider.name,
+            "judge_model": self._provider.model,
+            "prompt_version": PROMPT_VERSION,
+        }
+        provenance.update(result.metadata)
+        return result.model_copy(update={"metadata": provenance})
+
     def measure(self, case: EvaluationCase) -> Measurement:
         request = self._prompt_builder(case)
         if request is None:
@@ -109,8 +121,13 @@ class LlmJudgeEvaluator(BaseEvaluator):
             )
 
         # Both of the following may raise; BaseEvaluator records that as ERROR.
-        response = self._provider.complete(request)
-        verdict = parse_verdict(response.text)
+        try:
+            response = self._provider.complete(request)
+        except JudgeError:
+            raise
+        except Exception:
+            raise ProviderRequestError("Judge provider failed unexpectedly") from None
+        verdict = parse_verdict(response.text, strict=True)
 
         return Measurement(
             score=verdict.score,
@@ -121,5 +138,7 @@ class LlmJudgeEvaluator(BaseEvaluator):
                 "judge_model": response.model,
                 "prompt_version": request.metadata.get("prompt_version"),
                 "judge_reasoning": verdict.reasoning,
+                "configured_model": self._provider.model,
+                "attempts": response.metadata.get("attempts", 1),
             },
         )

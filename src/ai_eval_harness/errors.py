@@ -30,6 +30,15 @@ __all__ = [
     "JudgeError",
     "JudgeResponseError",
     "JudgeUnavailableError",
+    "MissingCredentialError",
+    "MissingProviderDependencyError",
+    "ProviderAuthenticationError",
+    "ProviderConnectionError",
+    "ProviderError",
+    "ProviderRateLimitError",
+    "ProviderRequestError",
+    "ProviderServerError",
+    "ProviderTimeoutError",
     "UnknownEvaluatorError",
 ]
 
@@ -144,6 +153,52 @@ class JudgeResponseError(JudgeError):
     def __init__(self, reason: str, raw_response: str) -> None:
         self.reason = reason
         self.raw_response = raw_response
-        super().__init__(
-            f"Could not parse judge response ({reason}). Raw response: {raw_response!r}"
-        )
+        # Raw output is available only to an explicit programmatic caller; it must
+        # never enter exception strings, CLI output, or persisted error reports.
+        super().__init__(f"Could not parse judge response ({reason}).")
+
+
+class MissingProviderDependencyError(ConfigError):
+    """Install the optional SDK extra before constructing a live provider."""
+
+
+class MissingCredentialError(ConfigError):
+    """A live provider has no runtime credential."""
+
+
+class ProviderError(JudgeError):
+    """Sanitized provider failure; no original request, headers, or response body."""
+
+    retryable = False
+
+
+class ProviderAuthenticationError(ProviderError):
+    """Authentication or permission failure; do not retry."""
+
+
+class ProviderRateLimitError(ProviderError):
+    """Rate limit; retry within the configured bound."""
+
+    retryable = True
+
+
+class ProviderTimeoutError(ProviderError):
+    """Transport timeout; retry within the configured bound."""
+
+    retryable = True
+
+
+class ProviderConnectionError(ProviderError):
+    """Connection failure; retry within the configured bound."""
+
+    retryable = True
+
+
+class ProviderServerError(ProviderError):
+    """Server failure; retry within the configured bound."""
+
+    retryable = True
+
+
+class ProviderRequestError(ProviderError):
+    """Permanent invalid request, unsupported model, or unexpected SDK failure."""

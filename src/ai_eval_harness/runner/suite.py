@@ -32,7 +32,7 @@ class GateResult(BaseModel):
 
 class SuiteReport(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    schema_version: str = "1"
+    schema_version: Literal["1", "2"] = "1"
     harness_version: str = __version__
     dataset: dict[str, Any]
     configuration: SuiteConfig
@@ -142,6 +142,7 @@ def run_suite(
     elif not results or not any(result.score is not None for result in results):
         status = "insufficient_data"
     return SuiteReport(
+        schema_version="2" if config.judge is not None else "1",
         dataset={
             "name": dataset.name,
             "case_count": len(dataset),

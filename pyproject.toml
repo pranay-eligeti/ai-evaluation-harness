@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ai-evaluation-harness"
-version = "0.1.0"
+version = "0.2.0"
 description = "A reusable, deterministic-first evaluation harness for RAG and LLM systems."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -24,10 +24,13 @@ classifiers = [
 
 # The deterministic evaluation path depends on pydantic only. TOML parsing uses
 # the standard library `tomllib`; the CLI uses the standard library `argparse`.
-# No HTTP client, no model-provider SDK: `ai-eval run` never touches the network.
+# Provider SDKs remain optional; deterministic suites never use the network.
 dependencies = ["pydantic>=2.7,<3"]
 
 [project.optional-dependencies]
+openai = ["openai>=3.22.1,<4"]
+anthropic = ["anthropic>=1.11.0,<2"]
+providers = ["openai>=3.22.1,<4", "anthropic>=1.11.0,<2"]
 dev = [
     "pytest>=8.2",
     "ruff>=0.6",

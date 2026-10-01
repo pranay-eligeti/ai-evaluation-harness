@@ -2,11 +2,14 @@
 
 import argparse
 import sys
+from contextlib import ExitStack
 from pathlib import Path
 
 from ai_eval_harness.datasets import load_dataset
-from ai_eval_harness.errors import AiEvalHarnessError
+from ai_eval_harness.errors import AiEvalHarnessError, ConfigError
 from ai_eval_harness.evaluators.registry import EvaluatorBuildContext, iter_specifications
+from ai_eval_harness.judges.base import JudgeProvider
+from ai_eval_harness.judges.providers import build_provider
 from ai_eval_harness.judges.scripted import load_scripted_provider
 from ai_eval_harness.reporting import summary, write_report
 from ai_eval_harness.runner.config import EvaluatorConfig, SuiteConfig, load_config
@@ -24,6 +27,11 @@ def main(argv: list[str] | None = None) -> int:
     run.add_argument("--k", type=int, default=3, help="Retrieval cutoff (default: 3)")
     run.add_argument("--report", type=Path, help="Write structured JSON report")
     run.add_argument("--allow-empty-dataset", action="store_true")
+    run.add_argument(
+        "--allow-live",
+        action="store_true",
+        help="Allow paid API calls that send evaluation content to a provider",
+    )
     args = parser.parse_args(argv)
     if args.command == "list-evaluators":
         for specification in iter_specifications():
@@ -56,12 +64,20 @@ def main(argv: list[str] | None = None) -> int:
         )
         if args.allow_empty_dataset:
             config = config.model_copy(update={"allow_empty_dataset": True})
-        provider = None
-        if config.judge_responses:
-            base = args.config.parent if args.config else Path.cwd()
-            provider = load_scripted_provider(base / config.judge_responses)
+        if config.judge is not None and not args.allow_live:
+            raise ConfigError(
+                "Live judge configuration requires --allow-live; API calls cost money "
+                "and send evaluation content to an external provider"
+            )
         dataset = load_dataset(args.dataset, allow_empty=config.allow_empty_dataset)
-        report = run_suite(dataset, config, context=EvaluatorBuildContext(provider))
+        with ExitStack() as stack:
+            provider: JudgeProvider | None = None
+            if config.judge is not None:
+                provider = stack.enter_context(build_provider(config.judge))
+            elif config.judge_responses:
+                base = args.config.parent if args.config else Path.cwd()
+                provider = load_scripted_provider(base / config.judge_responses)
+            report = run_suite(dataset, config, context=EvaluatorBuildContext(provider))
         if args.report:
             write_report(report, args.report)
         print(summary(report))

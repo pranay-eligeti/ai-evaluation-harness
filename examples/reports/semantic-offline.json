@@ -1,0 +1,295 @@
+{
+  "aggregates": {
+    "llm_judge_answer_relevance": {
+      "error_count": 0,
+      "mean_score": 0.8,
+      "pass_rate": null,
+      "scored_count": 5,
+      "skipped_count": 0,
+      "statuses": {
+        "scored": 5
+      }
+    },
+    "llm_judge_groundedness": {
+      "error_count": 0,
+      "mean_score": 0.6666666666666666,
+      "pass_rate": null,
+      "scored_count": 3,
+      "skipped_count": 2,
+      "statuses": {
+        "scored": 3,
+        "skipped": 2
+      }
+    }
+  },
+  "configuration": {
+    "allow_empty_dataset": false,
+    "evaluators": [
+      {
+        "min_case_score": null,
+        "params": {},
+        "type": "llm_judge_answer_relevance"
+      },
+      {
+        "min_case_score": null,
+        "params": {},
+        "type": "llm_judge_groundedness"
+      }
+    ],
+    "gates": [
+      {
+        "evaluator": "llm_judge_answer_relevance",
+        "max_error_count": 0,
+        "max_skipped_count": null,
+        "min_mean_score": 0.8,
+        "min_pass_rate": null,
+        "min_scored_count": 1
+      },
+      {
+        "evaluator": "llm_judge_groundedness",
+        "max_error_count": 0,
+        "max_skipped_count": 2,
+        "min_mean_score": 0.66,
+        "min_pass_rate": null,
+        "min_scored_count": 1
+      }
+    ],
+    "judge_responses": "judge-responses.json"
+  },
+  "dataset": {
+    "case_count": 5,
+    "case_metadata": {
+      "correct": {
+        "scenario": "relevant, grounded, correct citation"
+      },
+      "duplicate": {
+        "scenario": "duplicate ranking"
+      },
+      "missing": {
+        "scenario": "missing evidence"
+      },
+      "no-relevant": {
+        "scenario": "empty ground truth"
+      },
+      "wrong": {
+        "scenario": "irrelevant, unsupported, incorrect citation"
+      }
+    },
+    "checksum": "253d63a91b933c0c2dcf03d0323ccbaf46df6d781e8894e84ce4244d80112abd",
+    "name": "synthetic-rag",
+    "source_path": "examples\\datasets\\synthetic.json"
+  },
+  "evaluators": [
+    {
+      "kind": "llm_judge",
+      "name": "llm_judge_answer_relevance",
+      "type": "llm_judge_answer_relevance"
+    },
+    {
+      "kind": "llm_judge",
+      "name": "llm_judge_groundedness",
+      "type": "llm_judge_groundedness"
+    }
+  ],
+  "gates": [
+    {
+      "evaluator": "llm_judge_answer_relevance",
+      "explanation": "All configured thresholds satisfied",
+      "passed": true
+    },
+    {
+      "evaluator": "llm_judge_groundedness",
+      "explanation": "All configured thresholds satisfied",
+      "passed": true
+    }
+  ],
+  "harness_version": "0.2.0",
+  "results": [
+    {
+      "case_id": "correct",
+      "evaluator": "llm_judge_answer_relevance",
+      "evaluator_type": "llm_judge_answer_relevance",
+      "explanation": "Judge scored 1.000: Synthetic recorded relevance verdict; not a live model assessment.",
+      "kind": "llm_judge",
+      "metadata": {
+        "attempts": 1,
+        "configured_model": "scripted:offline-semantic-fixture-v2",
+        "criterion": "answer_relevance",
+        "judge_model": "scripted:offline-semantic-fixture-v2",
+        "judge_provider": "scripted",
+        "judge_reasoning": "Synthetic recorded relevance verdict; not a live model assessment.",
+        "prompt_version": "2"
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "correct",
+      "evaluator": "llm_judge_groundedness",
+      "evaluator_type": "llm_judge_groundedness",
+      "explanation": "Judge scored 1.000: Synthetic recorded faithfulness verdict; not a live model assessment.",
+      "kind": "llm_judge",
+      "metadata": {
+        "attempts": 1,
+        "configured_model": "scripted:offline-semantic-fixture-v2",
+        "criterion": "groundedness",
+        "judge_model": "scripted:offline-semantic-fixture-v2",
+        "judge_provider": "scripted",
+        "judge_reasoning": "Synthetic recorded faithfulness verdict; not a live model assessment.",
+        "prompt_version": "2"
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "wrong",
+      "evaluator": "llm_judge_answer_relevance",
+      "evaluator_type": "llm_judge_answer_relevance",
+      "explanation": "Judge scored 1.000: Synthetic recorded relevance verdict; not a live model assessment.",
+      "kind": "llm_judge",
+      "metadata": {
+        "attempts": 1,
+        "configured_model": "scripted:offline-semantic-fixture-v2",
+        "criterion": "answer_relevance",
+        "judge_model": "scripted:offline-semantic-fixture-v2",
+        "judge_provider": "scripted",
+        "judge_reasoning": "Synthetic recorded relevance verdict; not a live model assessment.",
+        "prompt_version": "2"
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "wrong",
+      "evaluator": "llm_judge_groundedness",
+      "evaluator_type": "llm_judge_groundedness",
+      "explanation": "Judge scored 0.000: Synthetic recorded faithfulness verdict; not a live model assessment.",
+      "kind": "llm_judge",
+      "metadata": {
+        "attempts": 1,
+        "configured_model": "scripted:offline-semantic-fixture-v2",
+        "criterion": "groundedness",
+        "judge_model": "scripted:offline-semantic-fixture-v2",
+        "judge_provider": "scripted",
+        "judge_reasoning": "Synthetic recorded faithfulness verdict; not a live model assessment.",
+        "prompt_version": "2"
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "missing",
+      "evaluator": "llm_judge_answer_relevance",
+      "evaluator_type": "llm_judge_answer_relevance",
+      "explanation": "Judge scored 0.500: Synthetic recorded relevance verdict; not a live model assessment.",
+      "kind": "llm_judge",
+      "metadata": {
+        "attempts": 1,
+        "configured_model": "scripted:offline-semantic-fixture-v2",
+        "criterion": "answer_relevance",
+        "judge_model": "scripted:offline-semantic-fixture-v2",
+        "judge_provider": "scripted",
+        "judge_reasoning": "Synthetic recorded relevance verdict; not a live model assessment.",
+        "prompt_version": "2"
+      },
+      "score": 0.5,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "missing",
+      "evaluator": "llm_judge_groundedness",
+      "evaluator_type": "llm_judge_groundedness",
+      "explanation": "Case lacks the inputs required to judge 'groundedness' (a generated answer, and retrieved document text where the criterion needs it).",
+      "kind": "llm_judge",
+      "metadata": {
+        "criterion": "groundedness",
+        "judge_model": "scripted:offline-semantic-fixture-v2",
+        "judge_provider": "scripted",
+        "prompt_version": "2"
+      },
+      "score": null,
+      "status": "skipped",
+      "threshold": null
+    },
+    {
+      "case_id": "duplicate",
+      "evaluator": "llm_judge_answer_relevance",
+      "evaluator_type": "llm_judge_answer_relevance",
+      "explanation": "Judge scored 1.000: Synthetic recorded relevance verdict; not a live model assessment.",
+      "kind": "llm_judge",
+      "metadata": {
+        "attempts": 1,
+        "configured_model": "scripted:offline-semantic-fixture-v2",
+        "criterion": "answer_relevance",
+        "judge_model": "scripted:offline-semantic-fixture-v2",
+        "judge_provider": "scripted",
+        "judge_reasoning": "Synthetic recorded relevance verdict; not a live model assessment.",
+        "prompt_version": "2"
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "duplicate",
+      "evaluator": "llm_judge_groundedness",
+      "evaluator_type": "llm_judge_groundedness",
+      "explanation": "Judge scored 1.000: Synthetic recorded faithfulness verdict; not a live model assessment.",
+      "kind": "llm_judge",
+      "metadata": {
+        "attempts": 1,
+        "configured_model": "scripted:offline-semantic-fixture-v2",
+        "criterion": "groundedness",
+        "judge_model": "scripted:offline-semantic-fixture-v2",
+        "judge_provider": "scripted",
+        "judge_reasoning": "Synthetic recorded faithfulness verdict; not a live model assessment.",
+        "prompt_version": "2"
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "no-relevant",
+      "evaluator": "llm_judge_answer_relevance",
+      "evaluator_type": "llm_judge_answer_relevance",
+      "explanation": "Judge scored 0.500: Synthetic recorded relevance verdict; not a live model assessment.",
+      "kind": "llm_judge",
+      "metadata": {
+        "attempts": 1,
+        "configured_model": "scripted:offline-semantic-fixture-v2",
+        "criterion": "answer_relevance",
+        "judge_model": "scripted:offline-semantic-fixture-v2",
+        "judge_provider": "scripted",
+        "judge_reasoning": "Synthetic recorded relevance verdict; not a live model assessment.",
+        "prompt_version": "2"
+      },
+      "score": 0.5,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "no-relevant",
+      "evaluator": "llm_judge_groundedness",
+      "evaluator_type": "llm_judge_groundedness",
+      "explanation": "Case lacks the inputs required to judge 'groundedness' (a generated answer, and retrieved document text where the criterion needs it).",
+      "kind": "llm_judge",
+      "metadata": {
+        "criterion": "groundedness",
+        "judge_model": "scripted:offline-semantic-fixture-v2",
+        "judge_provider": "scripted",
+        "prompt_version": "2"
+      },
+      "score": null,
+      "status": "skipped",
+      "threshold": null
+    }
+  ],
+  "schema_version": "1",
+  "status": "passed"
+}

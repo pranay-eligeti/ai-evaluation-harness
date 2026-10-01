@@ -16,12 +16,12 @@ them is coupled to a particular vendor, and each can be tested on its own:
    verdict onto the same :class:`~ai_eval_harness.results.EvaluationResult` type
    every deterministic evaluator produces.
 
-**Phase 1 ships no network-calling provider.** Two providers are included:
+**The default path remains offline.** Two offline providers are included:
 :class:`ScriptedJudgeProvider`, which replays recorded verdicts and makes the
 judge path genuinely executable offline and in CI, and
-:class:`NullJudgeProvider`, which refuses. Neither invents a score. Adding a real
-provider means writing one ``complete`` method; nothing in this package needs to
-change. See ``docs/LLM_JUDGES.md``.
+:class:`NullJudgeProvider`, which refuses. Neither invents a score. Optional OpenAI
+and Anthropic adapters live in ``judges.providers`` and are constructed explicitly.
+Importing this package does not load their SDKs. See ``docs/LLM_JUDGES.md``.
 """
 
 from ai_eval_harness.judges.base import (

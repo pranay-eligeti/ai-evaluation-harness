@@ -7,8 +7,8 @@ the runner, the aggregator, the gates, and the reports treat all evaluators
 alike.
 
 The uniformity stops at *execution*, not at *interpretation*. Each result carries
-an :class:`~ai_eval_harness.results.EvaluatorKind`, and reports aggregate by kind
-as well as by evaluator, so a reader can always separate reproducible arithmetic
+an :class:`~ai_eval_harness.results.EvaluatorKind`, and reports retain provenance
+alongside separate evaluator aggregates, so a reader can always separate reproducible arithmetic
 from a model's opinion. Running them through one pipeline is a convenience;
 claiming they are the same kind of evidence would be a lie.
 
@@ -23,6 +23,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import ClassVar, Protocol, runtime_checkable
 
+from ai_eval_harness.errors import ProviderError
 from ai_eval_harness.models import EvaluationCase
 from ai_eval_harness.results import (
     EvaluationResult,
@@ -148,7 +149,11 @@ class BaseEvaluator(ABC):
                 score=None,
                 threshold=self._min_case_score,
                 explanation=f"Evaluator raised {type(exc).__name__}: {exc}",
-                metadata={"error_type": type(exc).__name__, "error_message": str(exc)},
+                metadata={
+                    "error_type": type(exc).__name__,
+                    "error_message": str(exc),
+                    **({"retryable": exc.retryable} if isinstance(exc, ProviderError) else {}),
+                },
             )
 
         status = self._status_for(measurement.score)
