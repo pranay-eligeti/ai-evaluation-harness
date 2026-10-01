@@ -1,6 +1,31 @@
 # AI Evaluation Harness
 
+[![Evaluation CI](https://github.com/pranay-eligeti/ai-evaluation-harness/actions/workflows/ci.yml/badge.svg)](https://github.com/pranay-eligeti/ai-evaluation-harness/actions/workflows/ci.yml)
+
 Reusable Python infrastructure for evaluating captured RAG and LLM outputs. The harness provides deterministic metrics, offline judge plumbing, repeatable suites, structured reports, and CI quality gates. It does not generate answers or run a retriever.
+
+## Capabilities at a glance
+
+| Layer | Implemented capabilities |
+| --- | --- |
+| Retrieval | Recall@K, Precision@K, reciprocal rank / MRR |
+| Citations and answers | Citation F1/validity, normalized exact match, token F1, lexical groundedness |
+| Semantic evaluation | Answer relevance and groundedness through provider-neutral judges; scripted fixtures and optional OpenAI/Anthropic SDK adapters |
+| Execution | JSON/JSONL inputs, TOML suites, CLI, per-case results, aggregate metrics, configurable quality gates |
+| Verification | pytest, strict mypy, Ruff, GitHub Actions, and offline SDK transport tests |
+
+```mermaid
+flowchart LR
+    A[Captured RAG / LLM outputs] --> B[Validated evaluation cases]
+    B --> C[Deterministic evaluators]
+    B --> D[Semantic judge evaluators]
+    D --> E[Scripted / OpenAI / Anthropic provider]
+    C --> F[Suite aggregation and quality gates]
+    E --> F
+    F --> G[Structured JSON report and CLI exit status]
+```
+
+Start with the credential-free synthetic suite below. Optional live evaluation uses the same report and gate architecture with explicit opt-in.
 
 ## Installation and use
 
@@ -49,7 +74,7 @@ Lexical overlap cannot measure semantic truth, negation, paraphrases, or citatio
 
 See [architecture](docs/ARCHITECTURE.md), [methodology](docs/EVALUATION_METHODOLOGY.md), [metric formulas](docs/METRICS.md), [judges](docs/LLM_JUDGES.md), and [CI gates](docs/CI_GATES.md).
 
-## Optional semantic evaluation (Phase 2)
+## Optional semantic evaluation
 
 The base install needs only Pydantic. Install only the SDK you need:
 
