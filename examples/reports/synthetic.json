@@ -1,0 +1,1004 @@
+{
+  "aggregates": {
+    "answer_exact_match": {
+      "error_count": 0,
+      "mean_score": 0.5,
+      "pass_rate": null,
+      "scored_count": 4,
+      "skipped_count": 1,
+      "statuses": {
+        "scored": 4,
+        "skipped": 1
+      }
+    },
+    "answer_token_f1": {
+      "error_count": 0,
+      "mean_score": 0.5,
+      "pass_rate": null,
+      "scored_count": 4,
+      "skipped_count": 1,
+      "statuses": {
+        "scored": 4,
+        "skipped": 1
+      }
+    },
+    "citation_f1": {
+      "error_count": 0,
+      "mean_score": 0.6,
+      "pass_rate": null,
+      "scored_count": 5,
+      "skipped_count": 0,
+      "statuses": {
+        "scored": 5
+      }
+    },
+    "citation_validity": {
+      "error_count": 0,
+      "mean_score": 0.6666666666666666,
+      "pass_rate": null,
+      "scored_count": 3,
+      "skipped_count": 2,
+      "statuses": {
+        "scored": 3,
+        "skipped": 2
+      }
+    },
+    "lexical_groundedness": {
+      "error_count": 0,
+      "mean_score": 0.6666666666666666,
+      "pass_rate": null,
+      "scored_count": 3,
+      "skipped_count": 2,
+      "statuses": {
+        "scored": 3,
+        "skipped": 2
+      }
+    },
+    "precision@3": {
+      "error_count": 0,
+      "mean_score": 0.13333333333333333,
+      "pass_rate": null,
+      "scored_count": 5,
+      "skipped_count": 0,
+      "statuses": {
+        "scored": 5
+      }
+    },
+    "recall@3": {
+      "error_count": 0,
+      "mean_score": 0.5,
+      "pass_rate": null,
+      "scored_count": 4,
+      "skipped_count": 1,
+      "statuses": {
+        "scored": 4,
+        "skipped": 1
+      }
+    },
+    "reciprocal_rank": {
+      "error_count": 0,
+      "mean_score": 0.375,
+      "pass_rate": null,
+      "scored_count": 4,
+      "skipped_count": 1,
+      "statuses": {
+        "scored": 4,
+        "skipped": 1
+      }
+    }
+  },
+  "configuration": {
+    "allow_empty_dataset": false,
+    "evaluators": [
+      {
+        "min_case_score": null,
+        "params": {
+          "k": 3
+        },
+        "type": "recall_at_k"
+      },
+      {
+        "min_case_score": null,
+        "params": {
+          "denominator": "k",
+          "k": 3
+        },
+        "type": "precision_at_k"
+      },
+      {
+        "min_case_score": null,
+        "params": {},
+        "type": "reciprocal_rank"
+      },
+      {
+        "min_case_score": null,
+        "params": {},
+        "type": "citation_f1"
+      },
+      {
+        "min_case_score": null,
+        "params": {},
+        "type": "citation_validity"
+      },
+      {
+        "min_case_score": null,
+        "params": {},
+        "type": "answer_exact_match"
+      },
+      {
+        "min_case_score": null,
+        "params": {},
+        "type": "answer_token_f1"
+      },
+      {
+        "min_case_score": null,
+        "params": {},
+        "type": "lexical_groundedness"
+      }
+    ],
+    "gates": [
+      {
+        "evaluator": "recall@3",
+        "max_error_count": 0,
+        "max_skipped_count": 1,
+        "min_mean_score": 0.5,
+        "min_pass_rate": null,
+        "min_scored_count": 1
+      },
+      {
+        "evaluator": "precision@3",
+        "max_error_count": 0,
+        "max_skipped_count": null,
+        "min_mean_score": 0.13,
+        "min_pass_rate": null,
+        "min_scored_count": 1
+      },
+      {
+        "evaluator": "reciprocal_rank",
+        "max_error_count": 0,
+        "max_skipped_count": null,
+        "min_mean_score": 0.375,
+        "min_pass_rate": null,
+        "min_scored_count": 1
+      },
+      {
+        "evaluator": "citation_f1",
+        "max_error_count": 0,
+        "max_skipped_count": null,
+        "min_mean_score": 0.6,
+        "min_pass_rate": null,
+        "min_scored_count": 1
+      }
+    ],
+    "judge_responses": null
+  },
+  "dataset": {
+    "case_count": 5,
+    "case_metadata": {
+      "correct": {
+        "scenario": "relevant, grounded, correct citation"
+      },
+      "duplicate": {
+        "scenario": "duplicate ranking"
+      },
+      "missing": {
+        "scenario": "missing evidence"
+      },
+      "no-relevant": {
+        "scenario": "empty ground truth"
+      },
+      "wrong": {
+        "scenario": "irrelevant, unsupported, incorrect citation"
+      }
+    },
+    "checksum": "253d63a91b933c0c2dcf03d0323ccbaf46df6d781e8894e84ce4244d80112abd",
+    "name": "synthetic-rag",
+    "source_path": "examples\\datasets\\synthetic.json"
+  },
+  "evaluators": [
+    {
+      "kind": "deterministic",
+      "name": "recall@3",
+      "type": "recall_at_k"
+    },
+    {
+      "kind": "deterministic",
+      "name": "precision@3",
+      "type": "precision_at_k"
+    },
+    {
+      "kind": "deterministic",
+      "name": "reciprocal_rank",
+      "type": "reciprocal_rank"
+    },
+    {
+      "kind": "deterministic",
+      "name": "citation_f1",
+      "type": "citation_f1"
+    },
+    {
+      "kind": "deterministic",
+      "name": "citation_validity",
+      "type": "citation_validity"
+    },
+    {
+      "kind": "deterministic",
+      "name": "answer_exact_match",
+      "type": "answer_exact_match"
+    },
+    {
+      "kind": "deterministic",
+      "name": "answer_token_f1",
+      "type": "answer_token_f1"
+    },
+    {
+      "kind": "deterministic",
+      "name": "lexical_groundedness",
+      "type": "lexical_groundedness"
+    }
+  ],
+  "gates": [
+    {
+      "evaluator": "recall@3",
+      "explanation": "All configured thresholds satisfied",
+      "passed": true
+    },
+    {
+      "evaluator": "precision@3",
+      "explanation": "All configured thresholds satisfied",
+      "passed": true
+    },
+    {
+      "evaluator": "reciprocal_rank",
+      "explanation": "All configured thresholds satisfied",
+      "passed": true
+    },
+    {
+      "evaluator": "citation_f1",
+      "explanation": "All configured thresholds satisfied",
+      "passed": true
+    }
+  ],
+  "harness_version": "0.1.0",
+  "results": [
+    {
+      "case_id": "correct",
+      "evaluator": "recall@3",
+      "evaluator_type": "recall_at_k",
+      "explanation": "Recall@3 = 1.000: found 1 of 1 relevant document(s) in the top 3.",
+      "kind": "deterministic",
+      "metadata": {
+        "distinct_retrieved_count": 1,
+        "duplicates_collapsed": 0,
+        "found_ids": [
+          "beacon"
+        ],
+        "k": 3,
+        "missed_ids": [],
+        "relevant_ids": [
+          "beacon"
+        ],
+        "retrieved_count": 1
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "correct",
+      "evaluator": "precision@3",
+      "evaluator_type": "precision_at_k",
+      "explanation": "Precision@3 = 0.333: 1 of 3 evaluated result(s) were relevant (denominator convention: k).",
+      "kind": "deterministic",
+      "metadata": {
+        "denominator": "k",
+        "distinct_retrieved_count": 1,
+        "duplicates_collapsed": 0,
+        "evaluated_ids": [
+          "beacon"
+        ],
+        "hit_ids": [
+          "beacon"
+        ],
+        "k": 3,
+        "relevant_ids": [
+          "beacon"
+        ],
+        "retrieved_count": 1
+      },
+      "score": 0.3333333333333333,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "correct",
+      "evaluator": "reciprocal_rank",
+      "evaluator_type": "reciprocal_rank",
+      "explanation": "First relevant document is at rank 1; reciprocal rank = 1.000.",
+      "kind": "deterministic",
+      "metadata": {
+        "distinct_retrieved_count": 1,
+        "duplicates_collapsed": 0,
+        "first_relevant_rank": 1,
+        "k": null,
+        "relevant_ids": [
+          "beacon"
+        ],
+        "retrieved_count": 1
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "correct",
+      "evaluator": "citation_f1",
+      "evaluator_type": "citation_f1",
+      "explanation": "Citation F1 = 1.000 (precision 1.000, recall 1.000): all expected citations present and no spurious ones.",
+      "kind": "deterministic",
+      "metadata": {
+        "actual_citations": [
+          "beacon"
+        ],
+        "expected_citations": [
+          "beacon"
+        ],
+        "matched": [
+          "beacon"
+        ],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0,
+        "spurious": []
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "correct",
+      "evaluator": "citation_validity",
+      "evaluator_type": "citation_validity",
+      "explanation": "Citation validity = 1.000: all 1 cited id(s) resolve to retrieved documents.",
+      "kind": "deterministic",
+      "metadata": {
+        "actual_citations": [
+          "beacon"
+        ],
+        "retrieved_ids": [
+          "beacon"
+        ],
+        "unresolved_citations": []
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "correct",
+      "evaluator": "answer_exact_match",
+      "evaluator_type": "answer_exact_match",
+      "explanation": "Normalised generated answer matches the reference answer.",
+      "kind": "deterministic",
+      "metadata": {
+        "generated_answer": "Blue",
+        "reference_answer": "Blue"
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "correct",
+      "evaluator": "answer_token_f1",
+      "evaluator_type": "answer_token_f1",
+      "explanation": "Token-overlap F1 = 1.000 between the generated answer and the reference answer.",
+      "kind": "deterministic",
+      "metadata": {
+        "generated_answer": "Blue",
+        "reference_answer": "Blue"
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "correct",
+      "evaluator": "lexical_groundedness",
+      "evaluator_type": "lexical_groundedness",
+      "explanation": "Lexical groundedness = 1.000: that share of the answer's distinct content words appears in 1 retrieved document(s). Lexical overlap only; this is not a semantic faithfulness judgement.",
+      "kind": "deterministic",
+      "metadata": {
+        "documents_with_text": 1,
+        "grounding_document_ids": [
+          "beacon"
+        ]
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "wrong",
+      "evaluator": "recall@3",
+      "evaluator_type": "recall_at_k",
+      "explanation": "Recall@3 = 0.000: found 0 of 1 relevant document(s) in the top 3.",
+      "kind": "deterministic",
+      "metadata": {
+        "distinct_retrieved_count": 1,
+        "duplicates_collapsed": 0,
+        "found_ids": [],
+        "k": 3,
+        "missed_ids": [
+          "beacon"
+        ],
+        "relevant_ids": [
+          "beacon"
+        ],
+        "retrieved_count": 1
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "wrong",
+      "evaluator": "precision@3",
+      "evaluator_type": "precision_at_k",
+      "explanation": "Precision@3 = 0.000: 0 of 3 evaluated result(s) were relevant (denominator convention: k).",
+      "kind": "deterministic",
+      "metadata": {
+        "denominator": "k",
+        "distinct_retrieved_count": 1,
+        "duplicates_collapsed": 0,
+        "evaluated_ids": [
+          "tower"
+        ],
+        "hit_ids": [],
+        "k": 3,
+        "relevant_ids": [
+          "beacon"
+        ],
+        "retrieved_count": 1
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "wrong",
+      "evaluator": "reciprocal_rank",
+      "evaluator_type": "reciprocal_rank",
+      "explanation": "No relevant document appears in the result list; reciprocal rank = 0.000.",
+      "kind": "deterministic",
+      "metadata": {
+        "distinct_retrieved_count": 1,
+        "duplicates_collapsed": 0,
+        "k": null,
+        "relevant_ids": [
+          "beacon"
+        ],
+        "retrieved_count": 1
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "wrong",
+      "evaluator": "citation_f1",
+      "evaluator_type": "citation_f1",
+      "explanation": "Citation F1 = 0.000 (precision 0.000, recall 0.000): missing ['beacon']; spurious ['invented'].",
+      "kind": "deterministic",
+      "metadata": {
+        "actual_citations": [
+          "invented"
+        ],
+        "expected_citations": [
+          "beacon"
+        ],
+        "matched": [],
+        "missing": [
+          "beacon"
+        ],
+        "precision": 0.0,
+        "recall": 0.0,
+        "spurious": [
+          "invented"
+        ]
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "wrong",
+      "evaluator": "citation_validity",
+      "evaluator_type": "citation_validity",
+      "explanation": "Citation validity = 0.000: 1 of 1 cited id(s) do not appear in the retrieved context: ['invented'].",
+      "kind": "deterministic",
+      "metadata": {
+        "actual_citations": [
+          "invented"
+        ],
+        "retrieved_ids": [
+          "tower"
+        ],
+        "unresolved_citations": [
+          "invented"
+        ]
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "wrong",
+      "evaluator": "answer_exact_match",
+      "evaluator_type": "answer_exact_match",
+      "explanation": "Normalised generated answer does not match the reference answer.",
+      "kind": "deterministic",
+      "metadata": {
+        "generated_answer": "Red",
+        "reference_answer": "Blue"
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "wrong",
+      "evaluator": "answer_token_f1",
+      "evaluator_type": "answer_token_f1",
+      "explanation": "Token-overlap F1 = 0.000 between the generated answer and the reference answer.",
+      "kind": "deterministic",
+      "metadata": {
+        "generated_answer": "Red",
+        "reference_answer": "Blue"
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "wrong",
+      "evaluator": "lexical_groundedness",
+      "evaluator_type": "lexical_groundedness",
+      "explanation": "Lexical groundedness = 0.000: that share of the answer's distinct content words appears in 1 retrieved document(s). Lexical overlap only; this is not a semantic faithfulness judgement.",
+      "kind": "deterministic",
+      "metadata": {
+        "documents_with_text": 1,
+        "grounding_document_ids": [
+          "tower"
+        ]
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "missing",
+      "evaluator": "recall@3",
+      "evaluator_type": "recall_at_k",
+      "explanation": "Recall@3 = 0.000: found 0 of 1 relevant document(s) in the top 3.",
+      "kind": "deterministic",
+      "metadata": {
+        "distinct_retrieved_count": 0,
+        "duplicates_collapsed": 0,
+        "found_ids": [],
+        "k": 3,
+        "missed_ids": [
+          "beacon"
+        ],
+        "relevant_ids": [
+          "beacon"
+        ],
+        "retrieved_count": 0
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "missing",
+      "evaluator": "precision@3",
+      "evaluator_type": "precision_at_k",
+      "explanation": "Precision@3 = 0.000: 0 of 3 evaluated result(s) were relevant (denominator convention: k).",
+      "kind": "deterministic",
+      "metadata": {
+        "denominator": "k",
+        "distinct_retrieved_count": 0,
+        "duplicates_collapsed": 0,
+        "evaluated_ids": [],
+        "hit_ids": [],
+        "k": 3,
+        "relevant_ids": [
+          "beacon"
+        ],
+        "retrieved_count": 0
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "missing",
+      "evaluator": "reciprocal_rank",
+      "evaluator_type": "reciprocal_rank",
+      "explanation": "No relevant document appears in the result list; reciprocal rank = 0.000.",
+      "kind": "deterministic",
+      "metadata": {
+        "distinct_retrieved_count": 0,
+        "duplicates_collapsed": 0,
+        "k": null,
+        "relevant_ids": [
+          "beacon"
+        ],
+        "retrieved_count": 0
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "missing",
+      "evaluator": "citation_f1",
+      "evaluator_type": "citation_f1",
+      "explanation": "Citation F1 = 0.000 (precision 1.000, recall 0.000): missing ['beacon'].",
+      "kind": "deterministic",
+      "metadata": {
+        "actual_citations": [],
+        "expected_citations": [
+          "beacon"
+        ],
+        "matched": [],
+        "missing": [
+          "beacon"
+        ],
+        "precision": 1.0,
+        "recall": 0.0,
+        "spurious": []
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "missing",
+      "evaluator": "citation_validity",
+      "evaluator_type": "citation_validity",
+      "explanation": "Answer cites no sources, so citation validity is undefined. Whether it should have cited sources is measured by citation_f1.",
+      "kind": "deterministic",
+      "metadata": {
+        "retrieved_ids": []
+      },
+      "score": null,
+      "status": "skipped",
+      "threshold": null
+    },
+    {
+      "case_id": "missing",
+      "evaluator": "answer_exact_match",
+      "evaluator_type": "answer_exact_match",
+      "explanation": "Normalised generated answer does not match the reference answer.",
+      "kind": "deterministic",
+      "metadata": {
+        "generated_answer": "Unknown",
+        "reference_answer": "Blue"
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "missing",
+      "evaluator": "answer_token_f1",
+      "evaluator_type": "answer_token_f1",
+      "explanation": "Token-overlap F1 = 0.000 between the generated answer and the reference answer.",
+      "kind": "deterministic",
+      "metadata": {
+        "generated_answer": "Unknown",
+        "reference_answer": "Blue"
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "missing",
+      "evaluator": "lexical_groundedness",
+      "evaluator_type": "lexical_groundedness",
+      "explanation": "No retrieved document carries text, so grounding cannot be assessed. An answer is not ungrounded merely because the harness was given no document text.",
+      "kind": "deterministic",
+      "metadata": {
+        "documents_with_text": 0
+      },
+      "score": null,
+      "status": "skipped",
+      "threshold": null
+    },
+    {
+      "case_id": "duplicate",
+      "evaluator": "recall@3",
+      "evaluator_type": "recall_at_k",
+      "explanation": "Recall@3 = 1.000: found 1 of 1 relevant document(s) in the top 3.",
+      "kind": "deterministic",
+      "metadata": {
+        "distinct_retrieved_count": 2,
+        "duplicates_collapsed": 1,
+        "found_ids": [
+          "beacon"
+        ],
+        "k": 3,
+        "missed_ids": [],
+        "relevant_ids": [
+          "beacon"
+        ],
+        "retrieved_count": 3
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "duplicate",
+      "evaluator": "precision@3",
+      "evaluator_type": "precision_at_k",
+      "explanation": "Precision@3 = 0.333: 1 of 3 evaluated result(s) were relevant (denominator convention: k).",
+      "kind": "deterministic",
+      "metadata": {
+        "denominator": "k",
+        "distinct_retrieved_count": 2,
+        "duplicates_collapsed": 1,
+        "evaluated_ids": [
+          "tower",
+          "beacon"
+        ],
+        "hit_ids": [
+          "beacon"
+        ],
+        "k": 3,
+        "relevant_ids": [
+          "beacon"
+        ],
+        "retrieved_count": 3
+      },
+      "score": 0.3333333333333333,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "duplicate",
+      "evaluator": "reciprocal_rank",
+      "evaluator_type": "reciprocal_rank",
+      "explanation": "First relevant document is at rank 2; reciprocal rank = 0.500.",
+      "kind": "deterministic",
+      "metadata": {
+        "distinct_retrieved_count": 2,
+        "duplicates_collapsed": 1,
+        "first_relevant_rank": 2,
+        "k": null,
+        "relevant_ids": [
+          "beacon"
+        ],
+        "retrieved_count": 3
+      },
+      "score": 0.5,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "duplicate",
+      "evaluator": "citation_f1",
+      "evaluator_type": "citation_f1",
+      "explanation": "Citation F1 = 1.000 (precision 1.000, recall 1.000): all expected citations present and no spurious ones.",
+      "kind": "deterministic",
+      "metadata": {
+        "actual_citations": [
+          "beacon"
+        ],
+        "expected_citations": [
+          "beacon"
+        ],
+        "matched": [
+          "beacon"
+        ],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0,
+        "spurious": []
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "duplicate",
+      "evaluator": "citation_validity",
+      "evaluator_type": "citation_validity",
+      "explanation": "Citation validity = 1.000: all 1 cited id(s) resolve to retrieved documents.",
+      "kind": "deterministic",
+      "metadata": {
+        "actual_citations": [
+          "beacon"
+        ],
+        "retrieved_ids": [
+          "beacon",
+          "tower"
+        ],
+        "unresolved_citations": []
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "duplicate",
+      "evaluator": "answer_exact_match",
+      "evaluator_type": "answer_exact_match",
+      "explanation": "Normalised generated answer matches the reference answer.",
+      "kind": "deterministic",
+      "metadata": {
+        "generated_answer": "Blue",
+        "reference_answer": "Blue"
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "duplicate",
+      "evaluator": "answer_token_f1",
+      "evaluator_type": "answer_token_f1",
+      "explanation": "Token-overlap F1 = 1.000 between the generated answer and the reference answer.",
+      "kind": "deterministic",
+      "metadata": {
+        "generated_answer": "Blue",
+        "reference_answer": "Blue"
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "duplicate",
+      "evaluator": "lexical_groundedness",
+      "evaluator_type": "lexical_groundedness",
+      "explanation": "Lexical groundedness = 1.000: that share of the answer's distinct content words appears in 2 retrieved document(s). Lexical overlap only; this is not a semantic faithfulness judgement.",
+      "kind": "deterministic",
+      "metadata": {
+        "documents_with_text": 2,
+        "grounding_document_ids": [
+          "tower",
+          "beacon"
+        ]
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "no-relevant",
+      "evaluator": "recall@3",
+      "evaluator_type": "recall_at_k",
+      "explanation": "Recall@K is undefined: the case annotates no relevant documents, so there is no denominator.",
+      "kind": "deterministic",
+      "metadata": {
+        "distinct_retrieved_count": 0,
+        "duplicates_collapsed": 0,
+        "k": 3,
+        "relevant_ids": [],
+        "retrieved_count": 0
+      },
+      "score": null,
+      "status": "skipped",
+      "threshold": null
+    },
+    {
+      "case_id": "no-relevant",
+      "evaluator": "precision@3",
+      "evaluator_type": "precision_at_k",
+      "explanation": "Precision@3 = 0.000: 0 of 3 evaluated result(s) were relevant (denominator convention: k).",
+      "kind": "deterministic",
+      "metadata": {
+        "denominator": "k",
+        "distinct_retrieved_count": 0,
+        "duplicates_collapsed": 0,
+        "evaluated_ids": [],
+        "hit_ids": [],
+        "k": 3,
+        "relevant_ids": [],
+        "retrieved_count": 0
+      },
+      "score": 0.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "no-relevant",
+      "evaluator": "reciprocal_rank",
+      "evaluator_type": "reciprocal_rank",
+      "explanation": "Reciprocal rank is undefined: the case annotates no relevant documents, so there is no rank to find.",
+      "kind": "deterministic",
+      "metadata": {
+        "distinct_retrieved_count": 0,
+        "duplicates_collapsed": 0,
+        "k": null,
+        "relevant_ids": [],
+        "retrieved_count": 0
+      },
+      "score": null,
+      "status": "skipped",
+      "threshold": null
+    },
+    {
+      "case_id": "no-relevant",
+      "evaluator": "citation_f1",
+      "evaluator_type": "citation_f1",
+      "explanation": "Citation F1 = 1.000 (precision 1.000, recall 1.000): all expected citations present and no spurious ones.",
+      "kind": "deterministic",
+      "metadata": {
+        "actual_citations": [],
+        "expected_citations": [],
+        "matched": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0,
+        "spurious": []
+      },
+      "score": 1.0,
+      "status": "scored",
+      "threshold": null
+    },
+    {
+      "case_id": "no-relevant",
+      "evaluator": "citation_validity",
+      "evaluator_type": "citation_validity",
+      "explanation": "Answer cites no sources, so citation validity is undefined. Whether it should have cited sources is measured by citation_f1.",
+      "kind": "deterministic",
+      "metadata": {
+        "retrieved_ids": []
+      },
+      "score": null,
+      "status": "skipped",
+      "threshold": null
+    },
+    {
+      "case_id": "no-relevant",
+      "evaluator": "answer_exact_match",
+      "evaluator_type": "answer_exact_match",
+      "explanation": "Case has no reference_answer, so the generated answer cannot be compared against ground truth.",
+      "kind": "deterministic",
+      "metadata": {},
+      "score": null,
+      "status": "skipped",
+      "threshold": null
+    },
+    {
+      "case_id": "no-relevant",
+      "evaluator": "answer_token_f1",
+      "evaluator_type": "answer_token_f1",
+      "explanation": "Case has no reference_answer, so the generated answer cannot be compared against ground truth.",
+      "kind": "deterministic",
+      "metadata": {},
+      "score": null,
+      "status": "skipped",
+      "threshold": null
+    },
+    {
+      "case_id": "no-relevant",
+      "evaluator": "lexical_groundedness",
+      "evaluator_type": "lexical_groundedness",
+      "explanation": "No retrieved document carries text, so grounding cannot be assessed. An answer is not ungrounded merely because the harness was given no document text.",
+      "kind": "deterministic",
+      "metadata": {
+        "documents_with_text": 0
+      },
+      "score": null,
+      "status": "skipped",
+      "threshold": null
+    }
+  ],
+  "schema_version": "1",
+  "status": "passed"
+}

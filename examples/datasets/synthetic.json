@@ -1,0 +1,117 @@
+{
+  "name": "synthetic-rag",
+  "cases": [
+    {
+      "case_id": "correct",
+      "question": "What color is the synthetic beacon?",
+      "retrieved_documents": [
+        {
+          "doc_id": "beacon",
+          "text": "The beacon is blue."
+        }
+      ],
+      "expected_document_ids": [
+        "beacon"
+      ],
+      "generated_answer": "Blue",
+      "reference_answer": "Blue",
+      "actual_citations": [
+        "beacon"
+      ],
+      "expected_citations": [
+        "beacon"
+      ],
+      "metadata": {
+        "scenario": "relevant, grounded, correct citation"
+      }
+    },
+    {
+      "case_id": "wrong",
+      "question": "What color is the synthetic beacon?",
+      "retrieved_documents": [
+        {
+          "doc_id": "tower",
+          "text": "The tower is tall."
+        }
+      ],
+      "expected_document_ids": [
+        "beacon"
+      ],
+      "generated_answer": "Red",
+      "reference_answer": "Blue",
+      "actual_citations": [
+        "invented"
+      ],
+      "expected_citations": [
+        "beacon"
+      ],
+      "metadata": {
+        "scenario": "irrelevant, unsupported, incorrect citation"
+      }
+    },
+    {
+      "case_id": "missing",
+      "question": "What color is the synthetic beacon?",
+      "retrieved_documents": [],
+      "expected_document_ids": [
+        "beacon"
+      ],
+      "generated_answer": "Unknown",
+      "reference_answer": "Blue",
+      "actual_citations": [],
+      "expected_citations": [
+        "beacon"
+      ],
+      "metadata": {
+        "scenario": "missing evidence"
+      }
+    },
+    {
+      "case_id": "duplicate",
+      "question": "What color is the synthetic beacon?",
+      "retrieved_documents": [
+        {
+          "doc_id": "tower",
+          "text": "The tower is tall."
+        },
+        {
+          "doc_id": "tower",
+          "text": "The tower is tall."
+        },
+        {
+          "doc_id": "beacon",
+          "text": "The beacon is blue."
+        }
+      ],
+      "expected_document_ids": [
+        "beacon",
+        "beacon"
+      ],
+      "generated_answer": "Blue",
+      "reference_answer": "Blue",
+      "actual_citations": [
+        "beacon",
+        "beacon"
+      ],
+      "expected_citations": [
+        "beacon"
+      ],
+      "metadata": {
+        "scenario": "duplicate ranking"
+      }
+    },
+    {
+      "case_id": "no-relevant",
+      "question": "What color is the synthetic beacon?",
+      "retrieved_documents": [],
+      "expected_document_ids": [],
+      "generated_answer": "Unknown",
+      "reference_answer": null,
+      "actual_citations": [],
+      "expected_citations": [],
+      "metadata": {
+        "scenario": "empty ground truth"
+      }
+    }
+  ]
+}

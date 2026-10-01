@@ -1,0 +1,36 @@
+name: Evaluation CI
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  phase-one:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - run: ruff check src tests
+      - run: ruff format --check src tests
+      - run: mypy
+      - run: python -m pytest
+      - run: ai-eval --help
+      - run: ai-eval run --dataset examples/datasets/synthetic.json --config examples/suite.toml --report scratch/passing.json
+      - name: Verify deliberate gate failure
+        shell: bash
+        run: |
+          set +e
+          ai-eval run --dataset examples/datasets/synthetic.json --config examples/failing.toml --report scratch/failing.json
+          status=$?
+          set -e
+          test "$status" -eq 1
+      - name: Verify report contracts
+        run: |
+          python -c "from pathlib import Path; from ai_eval_harness.runner import SuiteReport; p=SuiteReport.model_validate_json(Path('scratch/passing.json').read_text()); f=SuiteReport.model_validate_json(Path('scratch/failing.json').read_text()); assert p.status == 'passed' and f.status == 'failed'"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evaluation-reports
+          path: scratch/*.json
