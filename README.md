@@ -4,6 +4,10 @@
 
 Reusable Python infrastructure for evaluating captured RAG and LLM outputs. The harness provides deterministic metrics, offline judge plumbing, repeatable suites, structured reports, and CI quality gates. It does not generate answers or run a retriever.
 
+Version **0.3.0** adds captured RAG runs and paired regression evaluation: compare
+baseline/candidate artifacts, inspect case-level changes, and apply absolute and
+relative quality gates without a RAG runtime dependency or network access.
+
 ## Capabilities at a glance
 
 | Layer | Implemented capabilities |
@@ -13,6 +17,7 @@ Reusable Python infrastructure for evaluating captured RAG and LLM outputs. The 
 | Semantic evaluation | Answer relevance and groundedness through provider-neutral judges; scripted fixtures and optional OpenAI/Anthropic SDK adapters |
 | Execution | JSON/JSONL inputs, TOML suites, CLI, per-case results, aggregate metrics, configurable quality gates |
 | Verification | pytest, strict mypy, Ruff, GitHub Actions, and offline SDK transport tests |
+| Regression | Versioned RAG captures, conservative report compatibility, matched-case deltas, population summaries, and configurable mean/pass-rate regression gates |
 
 ```mermaid
 flowchart LR
@@ -97,6 +102,19 @@ Prompt version 2 separates relevance from factual correctness and faithfulness, 
 
 Reports distinguish deterministic and model-judged scores and preserve criterion, provider, actual/configured model, prompt version, and attempts. Errors and skips preserve configured provenance. Reports still contain case metadata and judge reasoning, which may contain sensitive evaluation content; review datasets and restrict report access. No API keys, raw headers, SDK error bodies, or raw malformed outputs are intentionally persisted. Avoid SDK/HTTP debug logging with sensitive data.
 
-Configuration-driven live suites emit report schema version 2 for the new `judge` configuration. Deterministic/scripted suites retain version 1 and the existing configuration shape. `SuiteReport` accepts both versions; readers handling live reports must support version 2. Package version is 0.2.0.
+Configuration-driven live suites emit report schema version 2 for the new `judge` configuration. Deterministic/scripted suites retain version 1 and the existing configuration shape. `SuiteReport` accepts both versions; readers handling live reports must support version 2. Package version is 0.3.0.
 
 See [LLM judges](docs/LLM_JUDGES.md) for rubrics, configuration, retries, error taxonomy, and provider limitations. Real-SDK HTTP tests run offline when provider extras are installed and skip when they are absent; all fake adapter tests run in the base installation. No paid live test is required for verification.
+
+## Offline RAG regression workflow
+
+```bash
+ai-eval run --capture examples/rag/baseline.json --config examples/rag/suite.toml --report scratch/baseline.json
+ai-eval run --capture examples/rag/candidate.json --config examples/rag/suite.toml --report scratch/candidate.json
+ai-eval compare --baseline scratch/baseline.json --candidate scratch/candidate.json --config examples/rag/regression-pass.toml --report scratch/comparison.json
+```
+
+Use `regression-fail.toml` for a deliberate regression failure (exit 1). The
+baseline comes from the separate [RAG Knowledge Assistant](https://github.com/pranay-eligeti/rag-knowledge-assistant);
+the candidate injects controlled output changes. See [comparison semantics](docs/REGRESSION_COMPARISON.md)
+and [fixture regeneration](examples/rag/README.md). Existing dataset/report APIs remain compatible.

@@ -11,3 +11,12 @@ Pin dataset bytes and configuration when comparing runs. Reports record checksum
 For Phase 2 semantic runs, select a schema-capable account-accessible provider model explicitly and consent to external content transfer with --allow-live. Use separate relevance and faithfulness scores: a relevant answer can be false, and a faithful answer can fail to address the question. Missing context is a coverage gap; supplied but insufficient context is evidence against claim support. Model rubric anchors are qualitative judgments mapped to [0,1], not calibrated probabilities.
 
 Prompt version 2 treats questions/answers/documents as untrusted JSON data. Evaluate injection attempts and contradiction/paraphrase cases against human annotations before using gates in production. Synthetic scripted judgments demonstrate this execution path, not semantic accuracy. Bounded retries can create additional charges and stochastic differences; preserve attempts and actual model/prompt provenance when comparing runs. Do not interpret a fixed threshold crossing as statistically significant without separate analysis.
+
+## Paired regression methodology
+
+Compare the same questions and annotations, not merely similar aggregate values.
+Exact populations are required by default. Partial mode recomputes aggregates on
+the matched intersection with equal scored-case coverage. Added/removed cases are
+reported separately, never silently absorbed. Judge criterion/provider/model/prompt
+provenance must agree. Synthetic examples demonstrate mechanics, not statistical
+significance or general RAG quality. See [comparison methodology](REGRESSION_COMPARISON.md).

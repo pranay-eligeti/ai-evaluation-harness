@@ -6,13 +6,14 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict
 
 from ai_eval_harness import __version__
+from ai_eval_harness.capture import case_identity
 from ai_eval_harness.errors import ConfigError, EmptyDatasetError
 from ai_eval_harness.evaluators.base import Evaluator
 from ai_eval_harness.evaluators.registry import EvaluatorBuildContext, build_evaluator
 from ai_eval_harness.metrics.aggregation import mean
 from ai_eval_harness.models import EvaluationDataset
 from ai_eval_harness.results import EvaluationResult, EvaluationStatus
-from ai_eval_harness.runner.config import SuiteConfig
+from ai_eval_harness.runner.config import QualityGate, SuiteConfig
 
 
 class Aggregate(BaseModel):
@@ -107,8 +108,42 @@ def run_suite(
         name: aggregate([result for result in results if result.evaluator == name])
         for name in names
     }
+    gates = apply_quality_gates(aggregates, config.gates)
+    status: Literal["passed", "failed", "error", "insufficient_data"] = "passed"
+    if any(result.status == EvaluationStatus.ERROR for result in results):
+        status = "error"
+    elif any(not gate.passed for gate in gates):
+        status = "failed"
+    elif not results or not any(result.score is not None for result in results):
+        status = "insufficient_data"
+    return SuiteReport(
+        schema_version="2" if config.judge is not None else "1",
+        dataset={
+            "name": dataset.name,
+            "case_count": len(dataset),
+            "checksum": dataset.checksum,
+            "source_path": dataset.source_path,
+            "case_metadata": {case.case_id: case.metadata for case in dataset.cases},
+            "case_identity": {case.case_id: case_identity(case) for case in dataset.cases},
+        },
+        configuration=config,
+        evaluators=[
+            {"name": item.name, "type": item.evaluator_type, "kind": item.kind.value}
+            for item in instances
+        ],
+        results=results,
+        aggregates=aggregates,
+        gates=gates,
+        status=status,
+    )
+
+
+def apply_quality_gates(
+    aggregates: dict[str, Aggregate], configured_gates: list[QualityGate]
+) -> list[GateResult]:
+    """Apply absolute gates to aggregates; also validates loaded report verdicts."""
     gates: list[GateResult] = []
-    for gate in config.gates:
+    for gate in configured_gates:
         values = aggregates[gate.evaluator]
         failures: list[str] = []
         for field, threshold, minimum in (
@@ -134,29 +169,4 @@ def run_suite(
                 else "All configured thresholds satisfied",
             )
         )
-    status: Literal["passed", "failed", "error", "insufficient_data"] = "passed"
-    if any(result.status == EvaluationStatus.ERROR for result in results):
-        status = "error"
-    elif any(not gate.passed for gate in gates):
-        status = "failed"
-    elif not results or not any(result.score is not None for result in results):
-        status = "insufficient_data"
-    return SuiteReport(
-        schema_version="2" if config.judge is not None else "1",
-        dataset={
-            "name": dataset.name,
-            "case_count": len(dataset),
-            "checksum": dataset.checksum,
-            "source_path": dataset.source_path,
-            "case_metadata": {case.case_id: case.metadata for case in dataset.cases},
-        },
-        configuration=config,
-        evaluators=[
-            {"name": item.name, "type": item.evaluator_type, "kind": item.kind.value}
-            for item in instances
-        ],
-        results=results,
-        aggregates=aggregates,
-        gates=gates,
-        status=status,
-    )
+    return gates

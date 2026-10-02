@@ -15,3 +15,14 @@ Phase 2 adds `judges/providers`: validated nonsecret configuration, shared bound
 Provider clients disable their own retries; the harness retries only normalized transient failures. Validation stays outside retry handling. Constructed clients use fixed official endpoints and environment/programmatic credentials. The CLI requires --allow-live and closes owned clients with a context manager. Injected clients retain caller ownership. Provider factory construction is explicit for Python callers; run_suite still receives EvaluatorBuildContext and never initiates provider/network setup itself.
 
 The common result/report top-level structure is preserved. Semantic metadata includes criterion/provider/model/prompt provenance, including failures and skips. Strict verdict parsing and sanitized exceptions prevent raw transport errors or malformed outputs from entering reports. Version 2 prompts encode evaluated content as JSON data and have separate relevance/faithfulness rubrics.
+
+## Capture and comparison boundary
+
+`capture.CapturedRun` validates application-neutral JSON and adapts it to the
+existing dataset/runner. `comparison_models` defines an independent comparison
+schema/configuration. `comparison` performs pure report matching, provenance and
+population checks, deltas, and regression gates. Absolute gates are shared via
+`runner.suite.apply_quality_gates`; they are not replaced by regression gates.
+New evaluation reports add case identity fingerprints within extensible dataset
+provenance; evaluation schemas 1/2 remain unchanged. No application is imported.
+See [regression comparison](REGRESSION_COMPARISON.md) for the contract and flow.

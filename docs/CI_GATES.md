@@ -11,3 +11,13 @@ The passing sample accepts known synthetic defects using explicit fixture thresh
 Phase 2's standard suite includes fake OpenAI/Anthropic request/response, dependency/credential, malformed output, error, retry, prompt-boundary, CLI opt-in, and report provenance tests. Socket connections are forbidden by an autouse test fixture. Real SDK tests skip without extras; the dedicated CI step installs providers and runs them with HTTP MockTransport. It needs no API secrets, uses nonsecret offline placeholders, and cannot incur API costs. Deterministic sample/pass/failure/report steps are preserved.
 
 Live model behavior is not certified by offline transport tests. The optional manual CLI run requires --allow-live, environment credentials, and a model supporting the API's schema feature; it is never part of normal CI.
+
+## Separate regression gates
+
+Absolute gates check candidate quality independently. Comparison TOML uses
+`[[regression_gates]]` with evaluator, max_drop within [0,1], and optional metric
+(`mean_score` or `pass_rate`). A drop beyond tolerance fails even when absolute
+gates pass; an improvement still fails when candidate absolute gates fail. Missing
+or incompatible data never passes. The offline CI example tests both tolerant
+and zero-tolerance comparisons and parses `comparison-1` artifacts. See
+[configuration and exit codes](REGRESSION_COMPARISON.md).

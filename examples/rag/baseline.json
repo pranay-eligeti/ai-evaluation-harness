@@ -1,0 +1,99 @@
+{
+  "cases": [
+    {
+      "actual_citations": [
+        "retrieval.md"
+      ],
+      "case_id": "rag-1",
+      "expected_citations": [
+        "evaluation.md"
+      ],
+      "expected_document_ids": [
+        "evaluation.md"
+      ],
+      "generated_answer": "[retrieval.md] # Retrieval Engineering Retrieval selects context before generation. A useful retrieval system should keep source metadata attached to every chunk so the final answer can expose citations. Lexical retrieval is deterministic and easy to test. Dense retrieval uses embeddings to represent semantic similarity and can recover relevant passages even when the query and source use different wording. A production retrieval service should measure Recall@K, inspect failure cases, and keep retrieval separate from generation so the two layers can be evaluated independently.",
+      "metadata": {
+        "generation_mode": "extractive"
+      },
+      "question": "What should engineers measure before generation?",
+      "reference_answer": null,
+      "retrieved_documents": [
+        {
+          "doc_id": "retrieval.md",
+          "metadata": {
+            "chunk_id": "retrieval.md#chunk-000",
+            "source_id": "retrieval.md"
+          },
+          "score": 0.14353967997428546,
+          "text": "# Retrieval Engineering Retrieval selects context before generation. A useful retrieval system should keep source metadata attached to every chunk so the final answer can expose citations. Lexical retrieval is deterministic and easy to test. Dense retrieval uses embeddings to represent semantic similarity and can recover relevant passages even when the query and source use different wording. A production retrieval service should measure Recall@K, inspect failure cases, and keep retrieval separate from generation so the two layers can be evaluated independently."
+        }
+      ]
+    },
+    {
+      "actual_citations": [
+        "rag-design.md"
+      ],
+      "case_id": "rag-2",
+      "expected_citations": [
+        "rag-design.md"
+      ],
+      "expected_document_ids": [
+        "rag-design.md"
+      ],
+      "generated_answer": "[rag-design.md] # RAG Design Principles A grounded RAG pipeline has four major stages: ingestion, chunking, retrieval, and generation. Ingestion converts source files into normalized documents. Chunking creates bounded passages while preserving source identifiers. Retrieval ranks passages for a user question. Generation receives only retrieved context and should explicitly state when the corpus does not contain enough information. Citations are part of the answer contract rather than an afterthought. Each returned citation should identify the source and chunk that supported retrieval.",
+      "metadata": {
+        "generation_mode": "extractive"
+      },
+      "question": "Why should citations keep source identifiers attached to chunks?",
+      "reference_answer": null,
+      "retrieved_documents": [
+        {
+          "doc_id": "rag-design.md",
+          "metadata": {
+            "chunk_id": "rag-design.md#chunk-000",
+            "source_id": "rag-design.md"
+          },
+          "score": 0.2075070512351913,
+          "text": "# RAG Design Principles A grounded RAG pipeline has four major stages: ingestion, chunking, retrieval, and generation. Ingestion converts source files into normalized documents. Chunking creates bounded passages while preserving source identifiers. Retrieval ranks passages for a user question. Generation receives only retrieved context and should explicitly state when the corpus does not contain enough information. Citations are part of the answer contract rather than an afterthought. Each returned citation should identify the source and chunk that supported retrieval."
+        }
+      ]
+    },
+    {
+      "actual_citations": [
+        "retrieval.md"
+      ],
+      "case_id": "rag-3",
+      "expected_citations": [
+        "retrieval.md"
+      ],
+      "expected_document_ids": [
+        "retrieval.md"
+      ],
+      "generated_answer": "[retrieval.md] # Retrieval Engineering Retrieval selects context before generation. A useful retrieval system should keep source metadata attached to every chunk so the final answer can expose citations. Lexical retrieval is deterministic and easy to test. Dense retrieval uses embeddings to represent semantic similarity and can recover relevant passages even when the query and source use different wording. A production retrieval service should measure Recall@K, inspect failure cases, and keep retrieval separate from generation so the two layers can be evaluated independently.",
+      "metadata": {
+        "generation_mode": "extractive"
+      },
+      "question": "What is the role of dense retrieval embeddings?",
+      "reference_answer": null,
+      "retrieved_documents": [
+        {
+          "doc_id": "retrieval.md",
+          "metadata": {
+            "chunk_id": "retrieval.md#chunk-000",
+            "source_id": "retrieval.md"
+          },
+          "score": 0.29200905291208623,
+          "text": "# Retrieval Engineering Retrieval selects context before generation. A useful retrieval system should keep source metadata attached to every chunk so the final answer can expose citations. Lexical retrieval is deterministic and easy to test. Dense retrieval uses embeddings to represent semantic similarity and can recover relevant passages even when the query and source use different wording. A production retrieval service should measure Recall@K, inspect failure cases, and keep retrieval separate from generation so the two layers can be evaluated independently."
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "metric_id_unit": "source",
+    "top_k": 1
+  },
+  "revision": "fc5dc38acaecd82d4c8e2f1edab957e1eb22670a",
+  "run_id": "rag-tfidf-baseline",
+  "schema_version": "capture-1",
+  "system": "rag-knowledge-assistant/tfidf-extractive"
+}

@@ -1,0 +1,6 @@
+[[regression_gates]]
+evaluator="recall@1"
+max_drop=0.0
+[[regression_gates]]
+evaluator="citation_f1"
+max_drop=0.0

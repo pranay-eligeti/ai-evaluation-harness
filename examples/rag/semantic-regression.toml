@@ -1,0 +1,6 @@
+[[regression_gates]]
+evaluator = "llm_judge_answer_relevance"
+max_drop = 0.0
+[[regression_gates]]
+evaluator = "llm_judge_groundedness"
+max_drop = 0.0

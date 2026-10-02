@@ -18,3 +18,12 @@ Lexical groundedness = distinct answer content tokens found in context / distinc
 At the evaluator layer, None annotations mean unannotated and skip. Explicit [] means annotated empty and follows each formula. Missing reference/generated answers skip; empty strings are recorded responses and follow answer matching conventions. Missing expected citations skip correctness; missing actual citations defaults to an empty list.
 
 Aggregates are macro means over defined scores. Undefined means/pass rates remain null. Pass rate counts only thresholded passed/failed cases. Errors and skips contribute no fabricated zeros; their counts are available to gates. No combined overall score is calculated.
+
+## Regression deltas
+
+For compatible metrics, delta = candidate - baseline. Positive means improved,
+negative regressed, and zero unchanged. Means are computed over matched scored
+cases; pass-rate deltas additionally require the same per-case threshold. Missing
+values remain undefined. Different K values, precision denominator semantics,
+evaluator types/configurations, or judge provenance are not equivalent metrics.
+See [compatibility rules](REGRESSION_COMPARISON.md). No significance is inferred.

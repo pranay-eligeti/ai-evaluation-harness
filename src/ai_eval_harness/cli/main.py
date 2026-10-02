@@ -1,10 +1,14 @@
 """Small argparse CLI with explicit exit codes."""
 
 import argparse
+import json
 import sys
 from contextlib import ExitStack
 from pathlib import Path
 
+from ai_eval_harness.capture import load_capture
+from ai_eval_harness.comparison import ComparisonError, compare_reports, load_report
+from ai_eval_harness.comparison_models import load_comparison_config
 from ai_eval_harness.datasets import load_dataset
 from ai_eval_harness.errors import AiEvalHarnessError, ConfigError
 from ai_eval_harness.evaluators.registry import EvaluatorBuildContext, iter_specifications
@@ -21,7 +25,9 @@ def main(argv: list[str] | None = None) -> int:
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("list-evaluators", help="List supported evaluator types")
     run = commands.add_parser("run", help="Evaluate a JSON/JSONL dataset")
-    run.add_argument("--dataset", type=Path, required=True)
+    inputs = run.add_mutually_exclusive_group(required=True)
+    inputs.add_argument("--dataset", type=Path)
+    inputs.add_argument("--capture", type=Path, help="Versioned captured RAG run JSON")
     run.add_argument("--config", type=Path, help="TOML evaluators and quality gates")
     run.add_argument("--evaluator", action="append", help="Evaluator type (repeatable)")
     run.add_argument("--k", type=int, default=3, help="Retrieval cutoff (default: 3)")
@@ -32,7 +38,14 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Allow paid API calls that send evaluation content to a provider",
     )
+    compare = commands.add_parser("compare", help="Compare evaluated baseline/candidate reports")
+    compare.add_argument("--baseline", type=Path, required=True)
+    compare.add_argument("--candidate", type=Path, required=True)
+    compare.add_argument("--config", type=Path, required=True)
+    compare.add_argument("--report", type=Path, required=True)
     args = parser.parse_args(argv)
+    if args.command == "compare":
+        return comparison_cli(args.baseline, args.candidate, args.config, args.report)
     if args.command == "list-evaluators":
         for specification in iter_specifications():
             print(f"{specification.type}: {specification.description}")
@@ -69,7 +82,12 @@ def main(argv: list[str] | None = None) -> int:
                 "Live judge configuration requires --allow-live; API calls cost money "
                 "and send evaluation content to an external provider"
             )
-        dataset = load_dataset(args.dataset, allow_empty=config.allow_empty_dataset)
+        capture = load_capture(args.capture) if args.capture else None
+        dataset = (
+            capture.dataset(args.capture)
+            if capture
+            else load_dataset(args.dataset, allow_empty=config.allow_empty_dataset)
+        )
         with ExitStack() as stack:
             provider: JudgeProvider | None = None
             if config.judge is not None:
@@ -78,6 +96,8 @@ def main(argv: list[str] | None = None) -> int:
                 base = args.config.parent if args.config else Path.cwd()
                 provider = load_scripted_provider(base / config.judge_responses)
             report = run_suite(dataset, config, context=EvaluatorBuildContext(provider))
+        if capture is not None:
+            report.dataset["capture"] = capture.identification()
         if args.report:
             write_report(report, args.report)
         print(summary(report))
@@ -89,3 +109,41 @@ def main(argv: list[str] | None = None) -> int:
 
 def run_cli() -> None:
     sys.exit(main())
+
+
+def comparison_cli(baseline: Path, candidate: Path, config: Path, output: Path) -> int:
+    try:
+        left, right = load_report(baseline), load_report(candidate)
+        settings = load_comparison_config(config)
+        names = {item["name"] for report in (left, right) for item in report.evaluators}
+        if any(g.evaluator not in names for g in settings.regression_gates):
+            raise ValueError("Regression gate references an absent evaluator")
+    except (ValueError, OSError, KeyError, AiEvalHarnessError) as exc:
+        print(f"ai-eval: invalid comparison input: {exc}", file=sys.stderr)
+        return 2
+    try:
+        report = compare_reports(left, right, settings)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(
+            json.dumps(report.model_dump(mode="json"), sort_keys=True, indent=2, allow_nan=False)
+            + "\n",
+            encoding="utf-8",
+        )
+        print(
+            f"Comparison: {report.status}; matched={report.population.matched_count}, "
+            f"added={len(report.population.added)}, removed={len(report.population.removed)}"
+        )
+        for name, metric in report.evaluators.items():
+            print(
+                f"  {name}: {metric.mean_score.status}; delta={metric.mean_score.delta}; "
+                f"{metric.reason}"
+            )
+        for gate in report.regression_gates:
+            print(
+                f"  Regression {gate.evaluator}/{gate.metric}: "
+                f"{'PASS' if gate.passed else 'FAIL'} ({gate.explanation})"
+            )
+        return {"passed": 0, "failed": 1, "error": 3}[report.status]
+    except (ComparisonError, ValueError, OSError, AiEvalHarnessError) as exc:
+        print(f"ai-eval: comparison execution error: {exc}", file=sys.stderr)
+        return 3

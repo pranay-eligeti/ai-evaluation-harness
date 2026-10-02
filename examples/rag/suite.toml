@@ -1,0 +1,9 @@
+[[evaluators]]
+type="recall_at_k"
+params={k=1}
+min_case_score=0.5
+[[evaluators]]
+type="citation_f1"
+[[gates]]
+evaluator="recall@1"
+min_mean_score=0.6

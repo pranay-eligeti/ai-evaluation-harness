@@ -44,6 +44,36 @@ jobs:
                   assert all(result.kind.value == "llm_judge" for result in report.results)
                   assert all(result.metadata["prompt_version"] == "2" for result in report.results)
           PY
+      - name: Offline RAG capture evaluation
+        run: |
+          ai-eval run --capture examples/rag/baseline.json --config examples/rag/suite.toml --report scratch/baseline.json
+          ai-eval run --capture examples/rag/candidate.json --config examples/rag/suite.toml --report scratch/candidate.json
+      - name: Passing regression comparison
+        run: ai-eval compare --baseline scratch/baseline.json --candidate scratch/candidate.json --config examples/rag/regression-pass.toml --report scratch/comparison.json
+      - name: Offline semantic provenance comparison
+        run: ai-eval compare --baseline scratch/semantic.json --candidate scratch/semantic.json --config examples/rag/semantic-regression.toml --report scratch/semantic-comparison.json
+      - name: Deliberate regression failure
+        shell: bash
+        run: |
+          set +e
+          ai-eval compare --baseline scratch/baseline.json --candidate scratch/candidate.json --config examples/rag/regression-fail.toml --report scratch/regression-failed.json
+          status=$?
+          set -e
+          test "$status" -eq 1
+      - name: Validate capture and comparison contracts
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from ai_eval_harness.capture import load_capture
+          from ai_eval_harness.comparison_models import ComparisonReport
+          for name in ("baseline", "candidate"):
+              load_capture(Path(f"examples/rag/{name}.json"))
+          for name, status in (("comparison", "passed"), ("regression-failed", "failed")):
+              report = ComparisonReport.model_validate_json(Path(f"scratch/{name}.json").read_text())
+              assert report.status == status
+              assert report.population.matched_count == 3
+              assert {c.metrics["recall@1"].status for c in report.cases} == {"improved", "regressed", "unchanged"}
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
