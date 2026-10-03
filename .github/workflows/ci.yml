@@ -16,6 +16,13 @@ jobs:
       - run: ruff format --check src tests
       - run: mypy
       - run: python -m pytest
+      - name: Build and install the base wheel in isolation
+        run: |
+          python -m pip wheel --no-deps . --wheel-dir scratch/wheels
+          python -m venv scratch/wheel-env
+          scratch/wheel-env/bin/python -m pip install scratch/wheels/*.whl
+          scratch/wheel-env/bin/ai-eval --help
+          scratch/wheel-env/bin/ai-eval run --capture examples/rag/baseline.json --config examples/rag/suite.toml --report scratch/wheel-report.json
       - name: Install optional provider SDKs
         run: python -m pip install -e ".[providers]"
       - name: Exercise real SDKs using offline HTTP transports

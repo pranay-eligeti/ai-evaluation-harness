@@ -28,6 +28,8 @@ flowchart LR
     C --> F[Suite aggregation and quality gates]
     E --> F
     F --> G[Structured JSON report and CLI exit status]
+    G --> H[Baseline / candidate compatibility and case diffs]
+    H --> I[Regression gates and comparison JSON]
 ```
 
 Start with the credential-free synthetic suite below. Optional live evaluation uses the same report and gate architecture with explicit opt-in.
@@ -37,6 +39,8 @@ Start with the credential-free synthetic suite below. Optional live evaluation u
 Requires Python 3.12+.
 
 ```sh
+git clone https://github.com/pranay-eligeti/ai-evaluation-harness.git
+cd ai-evaluation-harness
 python -m venv .venv
 # Activate the environment using your shell's activation command.
 python -m pip install -e ".[dev]"
@@ -63,6 +67,7 @@ python -m pytest
 ruff check src tests
 ruff format --check src tests
 mypy
+python -m pip wheel --no-deps . --wheel-dir scratch/wheels
 ```
 
 Unit, integration, and subprocess CLI tests exercise the real synthetic dataset. GitHub Actions installs the package on Python 3.12, runs these checks, and verifies passing and failing sample gates.
@@ -118,3 +123,12 @@ Use `regression-fail.toml` for a deliberate regression failure (exit 1). The
 baseline comes from the separate [RAG Knowledge Assistant](https://github.com/pranay-eligeti/rag-knowledge-assistant);
 the candidate injects controlled output changes. See [comparison semantics](docs/REGRESSION_COMPARISON.md)
 and [fixture regeneration](examples/rag/README.md). Existing dataset/report APIs remain compatible.
+
+The three-case example includes one improvement, one regression, and one unchanged
+case. Recall@1 stays at 2/3 while citation F1 drops from 2/3 to 1/3; the passing
+tolerance accepts that drop and the strict fixture rejects it. This illustrates
+why aggregate retrieval quality alone cannot establish regression safety.
+
+See the [changelog and artifact compatibility policy](CHANGELOG.md) for the 0.3.0
+portfolio release. Wheels include the CLI and typed package; examples remain in
+the repository and do not require provider SDKs or credentials.
